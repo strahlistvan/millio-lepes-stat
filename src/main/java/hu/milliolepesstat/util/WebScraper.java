@@ -55,8 +55,8 @@ public class WebScraper {
 				}
 				else if ("okk".equals(cls)) {
 					Double kkNumber = Double.parseDouble(node.getTextContent());
-					school.setKkNumber(kkNumber);
-				}			
+					school.setOkkNumber(kkNumber);
+				}
 			}
 		}
 		System.out.println(school);
