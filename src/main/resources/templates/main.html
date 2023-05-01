@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>A Millió Lépés verseny jelenlegi állása</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-    <link rel="stylesheet" href="style.css">
+    <!-- meta name="viewport" content="width=device-width, initial-scale=1" -->
+    <!-- link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" -->
+    <!-- link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" -->
+    <!-- link rel="stylesheet" href="style.css" -->
 </head>
 <body>
     <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
@@ -25,7 +25,27 @@
         </div>
         <div class="w3-display-middle">
             <h1 class="w3-xxxlarge w3-animate-top">Millió lépés az iskoládért verseny</h1>
-            <hr class="w3-border-grey" style="margin:auto;width:40%">
+            <hr class="w3-border-grey" style="margin:auto;width:40%"> <br />
+            <p>Résztvevők száma országosan: <span th:text="${allParticipant}"></span> </p>         
+            <p>Eddig megtett összes kékkör száma: <span th:text="${allOKK}"></span></p>
+            <table>
+				<tr>
+					<th>Helyezés</th>
+					<th>Név</th>
+					<th>Helység</th>
+					<th>Vármegye</th>
+					<th>Kékkörök száma</th>
+					<th>Résztvevők száma</th>
+				</tr>
+				<tr th:each="school: ${schools}">
+					<td th:text="${school.position}"></td>
+					<td th:text="${school.name}"></td>
+					<td th:text="${school.city}"></td>
+					<td th:text="${school.county}"></td>
+					<td th:text="${school.okkNumber}"></td>
+					<td th:text="${school.participants}"></td>
+				</tr>
+			</table>
         </div>
     </div>
 </body>

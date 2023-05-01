@@ -10,9 +10,15 @@ public class Calculator {
 	public static final Double DIST_OKK_IN_METERS = 2550000.0;
 	public static final Integer PRIZECOUNT = 5;
 
-
+	
+	/** Sums up the all participants of the competition */
+	public static Integer sumParticipants(List<School> schoolList) {
+		return schoolList.stream().map(item -> item.getParticipants()).mapToInt(Integer::intValue).sum();
+	}
+	
+	/** Sums up the school "Országos Kék Kör"   */
 	public static Integer sumAllOKK(List<School> schoolList) {
-		return schoolList.stream().map(item -> (int) Math.floor(item.getOkkNumber())).reduce(0, Integer::sum);
+		return (int) schoolList.stream().map(item -> item.getOkkNumber()).mapToDouble(Double::doubleValue).sum();
 	}
 
 	/** Returns value of Binomial Coefficient C(n, k) */

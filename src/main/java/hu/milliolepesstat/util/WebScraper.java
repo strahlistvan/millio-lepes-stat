@@ -5,6 +5,9 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hu.milliolepesstat.entity.*;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.*;
 
 
@@ -62,8 +65,8 @@ public class WebScraper {
 		System.out.println(school);
 		return school;
 	}
-	
-	public static List<School> scape() throws Exception {
+
+	public static List<School> scapeAllSchools() throws MalformedURLException, IOException  {
 
 		List<School> schoolList = new ArrayList<School>();
 
