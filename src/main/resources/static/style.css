@@ -1,8 +1,14 @@
-h1 {font-family: "Raleway", sans-serif}
-h1:hover {color: gray}
-body, html {height: 100%}
+h1 {
+  font-family: "Raleway", sans-serif;
+  text-align: center;
+}
+h1:hover {
+  color: gray;
+}
+body, html {
+  height: 100%;
+}
 .bgimg {
-  background-color: black;
   min-height: 100%;
   background-position: center;
   background-size: cover;
