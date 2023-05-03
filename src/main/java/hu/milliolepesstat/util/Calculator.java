@@ -1,6 +1,7 @@
 package hu.milliolepesstat.util;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 
@@ -13,6 +14,12 @@ public class Calculator {
 	public static final Integer PRIZE_COUNT = 100;
 	public static final Integer PRIZE_AMOUNT_FT = 1000000;
 
+	public static final Calendar CALENDAR = GregorianCalendar.getInstance();
+	static {
+		CALENDAR.set(2023, Calendar.JUNE, 11);
+	}
+	public static final Date END_DATE = CALENDAR.getTime();
+	
 	
 	/** Sums up the all participants of the competition */
 	public static Integer sumParticipants(List<School> schoolList) {
@@ -24,41 +31,12 @@ public class Calculator {
 		return schoolList.stream().map(item -> (int) Math.floor(item.getOkkNumber())).mapToInt(Integer::intValue).sum();
 	}
 
-	// BAD PERFORMANCE !
-/*	public static Integer binomialCoeff(Integer n, Integer k) {
-
-		if (k > n) {
-			return 0;
-		}
-		if (k == 0 || k == n) {
-			return 1;
-		}
- 
-		return binomialCoeff(n - 1, k - 1) + binomialCoeff(n - 1, k);
+	/** Sums up the schools distance 
+	 *  Return measurement is OKK = "Országos Kék Kör"
+	 **/
+	public static Double sumAllDistance(List<School> schoolList) {
+		return schoolList.stream().map(item -> item.getOkkNumber()).mapToDouble(Double::doubleValue).sum();
 	}
-*/
-	/** Returns value of Binomial Coefficient C(n, k) */
-	public static Long binomialCoeff(Long n, Long k) {
-		
-		if (k > n) {
-			return 0L;
-		}
-		if (k == 0 || k == n) {
-			return 1L;
-		}
-		
-		Long numerator = 1L, denominator = 1L;
-		for (long i = n; i > n - k; --i) {
-			numerator *= i;
-		}
-		for (long i = 2; i <= k; ++i) {
-			denominator *= i;
-		}
-		System.out.println(numerator + "/" + denominator );
-		return (denominator == 0) ? 0 : numerator / denominator;
-		
-	}
-	
 	
 	/** Calculate the probability to win at least one prize */
 	public static Double calcWinProbability(Integer myTicketCount, Integer allTicketCount) {
@@ -69,19 +47,13 @@ public class Calculator {
 		if (myTicketCount == 0) {
 			return 0.0;
 		}
-		
-		//Long failureCounts = binomialCoeff((long) (allTicketCount - PRIZECOUNT), (long) myTicketCount);
-		//Long allCaseCounts = binomialCoeff((long) allTicketCount, (long) myTicketCount);
-		//Double failureProbability = (double) failureCounts / allCaseCounts;
-		
-		System.out.println("allTicketCount = " + allTicketCount + " Prizecount = " + PRIZE_COUNT + "myTicketcont = " + myTicketCount);
+
 		HypergeometricDistribution distr = new HypergeometricDistribution(allTicketCount, PRIZE_COUNT, myTicketCount);
-		
 		return 1.0 - distr.probability(0);
 	}
 
 	/** Calculate the probability to win exactly N prize (N=exactWinCount) */
-	public static Double calcWinCountProbability(Integer myTicketCount, Integer allTicketCount, Integer exactWinCount) {
+	private static Double calcWinCountProbability(Integer myTicketCount, Integer allTicketCount, Integer exactWinCount) {
 		// Error handling
 		if (allTicketCount < PRIZE_COUNT) {
 			allTicketCount = PRIZE_COUNT;
@@ -90,14 +62,7 @@ public class Calculator {
 			exactWinCount = PRIZE_COUNT;
 		}
 
-	//	Long successCounts = binomialCoeff((long)PRIZECOUNT, (long)exactWinCount);
-//		Long failureCounts = binomialCoeff((long)(allTicketCount - PRIZECOUNT), (long)(myTicketCount - exactWinCount));
-//		Long allCaseCounts = binomialCoeff((long) allTicketCount, (long)myTicketCount);
-
 		HypergeometricDistribution distr = new HypergeometricDistribution(allTicketCount, PRIZE_COUNT, myTicketCount);
-		System.out.println("allTicketCount = " + allTicketCount + " Prizecount = " + PRIZE_COUNT 
-				+ "myTicketcont = " + myTicketCount
-				+ " az esély pontosan " + exactWinCount + " nyereményre: " + exactWinCount );
 		return distr.probability(exactWinCount);
 
 	}
@@ -105,7 +70,7 @@ public class Calculator {
 	/** How many prizes can we expect with the given ticket counts? 
 	 *  Weighted sum of prize counts multiply by the probability 
 	 **/
-	public static Double calcPrizeExcpectedValue(Integer myTicketCount, Integer allTicketCount) {
+	public static Double calcPrizeExcpectedValueCheck(Integer myTicketCount, Integer allTicketCount) {
 		Double expValue = 0.0;
 		for (int k = 1; k < myTicketCount; ++k) {
 			expValue += (double) k * calcWinCountProbability(myTicketCount, allTicketCount, k);
@@ -114,11 +79,43 @@ public class Calculator {
 	}
 
 	/** How many prizes can we expect with the given ticket counts?
-	 * E(X) = n * (K/N) 
-	 * where n is the sample size K a the success elements and N the population size
-	 *  */
-	public static Double calcPrizeExcpectedValue2(Integer myTicketCount, Integer allTicketCount) {
+	 *  E(X) = n * (K/N) 
+	 *  where n is the sample size K a the success elements and N the population size
+	 **/
+	public static Double calcPrizeExcpectedValue(Integer myTicketCount, Integer allTicketCount) {
 		return (double) myTicketCount * PRIZE_COUNT / allTicketCount;
 	}
 	
+	public static Double convertOkkToKm(Double okk) {
+		return DIST_OKK_IN_METERS * okk / 1000.0;
+	}
+
+	public static Long convertOkkToSteps(Double okk) {
+		return (long) Math.floor(DIST_OKK_IN_METERS * STEP_SIZE_IN_METERS * okk);
+	}
+	
+	public static Long getBestSchoolSteps(List<School> schoolList) {
+		Long result = 0L;
+		if (schoolList != null && schoolList.size() > 0) {
+			result = convertOkkToSteps(schoolList.get(0).getOkkNumber()); // the list sorted by distance
+		}
+		return result;
+	}
+	
+	public static Integer getRemainingDays() {
+		Date now = GregorianCalendar.getInstance().getTime();
+		System.out.println("Végdátum " + END_DATE.toString() + " Mostani: " + now.toString());
+		Long diffInMs = END_DATE.getTime() - now.getTime();
+
+		System.out.println(END_DATE.getTime());
+		System.out.println(now.getTime());
+		
+		if (diffInMs < 0) {
+			return 0;
+		}
+
+		Integer diffInDays = (int) TimeUnit.DAYS.convert(diffInMs, TimeUnit.MILLISECONDS);
+		return diffInDays;
+	}
+
 }

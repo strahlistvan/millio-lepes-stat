@@ -1,9 +1,7 @@
 package hu.milliolepesstat.util;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.*;
 import hu.milliolepesstat.entity.*;
 
 import java.io.IOException;
@@ -13,7 +11,7 @@ import java.util.*;
 
 public class WebScraper {
 
-	public static School scrapeSchool(DomNode schoolNode) {
+	private static School scrapeSchool(DomNode schoolNode) {
 		School school = new School();
 		school.setId(schoolNode.getAttributes().getNamedItem("id").getNodeValue());
 		
@@ -62,7 +60,7 @@ public class WebScraper {
 				}
 			}
 		}
-		System.out.println(school);
+
 		return school;
 	}
 
@@ -86,5 +84,20 @@ public class WebScraper {
 		}
 		return schoolList;
 	}
-	
+
+	public static String scrapeRefreshDate() throws MalformedURLException, IOException {
+		
+		String result = "Ismeretlen";
+		
+		try (WebClient webClient = new WebClient()) {
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setJavaScriptEnabled(false);
+			
+			String url = "https://milliolepes.hu/iskolak-toplistaja/";
+			HtmlPage page = webClient.getPage(url);
+			
+			result = page.querySelector("strong").getTextContent();						
+		}
+		return result;
+	}
 }

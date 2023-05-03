@@ -19,8 +19,12 @@
 		<div class="w3-responsive">
 			<h1 class="w3-xxxlarge w3-animate-top">Millió lépés az iskoládért verseny</h1>
 			<hr class="w3-border-grey" style="margin:auto;width:40%"> <br />
-			<p>Résztvevők száma országosan: <span th:text="${allParticipant}"></span> </p>		 
-			<p>Eddig megtett összes kékkör száma: <span th:text="${allOKK}"></span></p>
+			<p>Résztvevők száma országosan: <th:block th:text="${#numbers.formatDecimal(allParticipant, 1, 'DEFAULT', 0,'DEFAULT')}" /> fő</p>		 
+			<p>Eddig megtett összes <i>teljesített</i> kékkör száma: <th:block th:text="${allOKK}"></p>
+			<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 2, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
+			   ami megközelítőleg <th:block th:text="${#numbers.formatDecimal(allDistanceInKm, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
+			   km távolság, azaz nagyjából <th:block th:text="${#numbers.formatDecimal(allDistanceInSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés. </p>
+			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}"></p>
 			<table class="w3-table-all w3-small w3-hoverable">
 				<tr>
 					<th>Helyezés</th>
@@ -31,16 +35,20 @@
 					<th>Résztvevők száma</th>
 					<th>Nyerési esély (min 1 nyereményre)</th>
 					<th>Nyeremények várható értéke</th>
+					<th>Lépés kell még az első helyhez</th>
+					<th>Napi ennyi lépés kell az 1. helyhez</th>
 				</tr>
 				<tr th:each="school: ${schools}">
 					<td th:text="${school.position}"></td>
 					<td th:text="${school.name}"></td>
 					<td th:text="${school.city}"></td>
 					<td th:text="${school.county}"></td>
-					<td th:text="${school.okkNumber}"></td>
-					<td th:text="${school.participants}"></td>
-					<td><th:block th:text="${#numbers.formatDecimal(school.winProbability, 0, 'DEFAULT', 2, 'DEFAULT')}" /> %</td>
-					<td><th:block th:text="${school.prizeExpectedValue}" /> Ft</td>
+					<td th:text="${#numbers.formatDecimal(school.okkNumber, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
+					<td th:text="${#numbers.formatDecimal(school.participants, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+					<td><th:block th:text="${#numbers.formatDecimal(school.winProbability, 1, 'DEFAULT', 2, 'DEFAULT')}" />%</td>
+					<td><th:block th:text="${#numbers.formatDecimal(school.prizeExpectedValue, 1, 'DEFAULT', 0, 'DEFAULT')}" /> Ft</td>
+					<td><th:block th:text="${#numbers.formatDecimal(school.distanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
+					<td><th:block th:text="${#numbers.formatDecimal(school.dailyStepsNeedToBest, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés / fő</td>
 				</tr>
 			</table>
 		</div>
