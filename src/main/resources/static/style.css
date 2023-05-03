@@ -21,4 +21,9 @@ body, html {
   transform: rotate(-45deg);
   -webkit-transform: rotate(-45deg);
 }
-p {text-align: justify}
+p {
+  text-align: justify;
+}
+div {
+  padding: 2%;
+}
