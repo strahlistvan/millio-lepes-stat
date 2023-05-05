@@ -7,13 +7,17 @@ import org.springframework.ui.Model;
 
 import hu.milliolepesstat.entity.School;
 import hu.milliolepesstat.util.Calculator;
+import hu.milliolepesstat.util.DateUtil;
 import hu.milliolepesstat.util.WebScraper;
 
 @Service
 public class SchoolService {
 
 	public void setSchoolsCalculatedData(List<School> schoolList, Integer allOkkCount) {
+		Integer remainingDays = DateUtil.getRemainingDays();
+
 		for (School sch: schoolList) {
+
 			sch.calcWinProbability(allOkkCount);
 			sch.calcprizeExpectedValue(allOkkCount);
 
@@ -22,8 +26,8 @@ public class SchoolService {
 			sch.setDistanceFromBestSteps(dist);
 
 			Long dailyStepsNeed = Long.MAX_VALUE;
-			if (sch.getParticipants() > 0 && Calculator.getRemainingDays() > 0) {
-				dailyStepsNeed = dist / ( sch.getParticipants() * Calculator.getRemainingDays() );
+			if (sch.getParticipants() > 0 && remainingDays > 0) {
+				dailyStepsNeed = dist / ( sch.getParticipants() * remainingDays );
 			}
 			sch.setDailyStepsNeedToBest(dailyStepsNeed);
 		}
@@ -48,9 +52,10 @@ public class SchoolService {
 		}
 	}
 	
-	public void addRefreshDateToModel(Model model) {
+	public void addCalendarDataToModel(Model model) {
 		try {
 			model.addAttribute("refreshDate", WebScraper.scrapeRefreshDate());
+			model.addAttribute("remainingDays", DateUtil.getRemainingDays());
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

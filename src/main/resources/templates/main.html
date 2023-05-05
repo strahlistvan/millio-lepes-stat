@@ -24,7 +24,8 @@
 			<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 2, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
 			   ami megközelítőleg <th:block th:text="${#numbers.formatDecimal(allDistanceInKm, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
 			   km távolság, azaz nagyjából <th:block th:text="${#numbers.formatDecimal(allDistanceInSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés. </p>
-			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}"></p>
+			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}" />, 
+			   a játék vége 2023. június 11., hátralévő napok száma: <th:block th:text="${remainingDays}"/> </p>
 			<table class="w3-table-all w3-small w3-hoverable">
 				<tr>
 					<th>Helyezés</th>

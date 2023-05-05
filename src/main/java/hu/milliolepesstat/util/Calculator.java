@@ -1,8 +1,6 @@
 package hu.milliolepesstat.util;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 
 import hu.milliolepesstat.entity.School;
@@ -14,13 +12,6 @@ public class Calculator {
 	public static final Integer PRIZE_COUNT = 100;
 	public static final Integer PRIZE_AMOUNT_FT = 1000000;
 
-	public static final Calendar CALENDAR = GregorianCalendar.getInstance();
-	static {
-		CALENDAR.set(2023, Calendar.JUNE, 11);
-	}
-	public static final Date END_DATE = CALENDAR.getTime();
-	
-	
 	/** Sums up the all participants of the competition */
 	public static Integer sumParticipants(List<School> schoolList) {
 		return schoolList.stream().map(item -> item.getParticipants()).mapToInt(Integer::intValue).sum();
@@ -100,22 +91,6 @@ public class Calculator {
 			result = convertOkkToSteps(schoolList.get(0).getOkkNumber()); // the list sorted by distance
 		}
 		return result;
-	}
-	
-	public static Integer getRemainingDays() {
-		Date now = GregorianCalendar.getInstance().getTime();
-		System.out.println("Végdátum " + END_DATE.toString() + " Mostani: " + now.toString());
-		Long diffInMs = END_DATE.getTime() - now.getTime();
-
-		System.out.println(END_DATE.getTime());
-		System.out.println(now.getTime());
-		
-		if (diffInMs < 0) {
-			return 0;
-		}
-
-		Integer diffInDays = (int) TimeUnit.DAYS.convert(diffInMs, TimeUnit.MILLISECONDS);
-		return diffInDays;
 	}
 
 }
