@@ -17,15 +17,17 @@
 			</form>
 		</div>
 		<div class="w3-responsive">
-			<h1 class="w3-xxxlarge w3-animate-top">Millió lépés az iskoládért verseny</h1>
+			<h1 class="w3-xxxlarge w3-animate-top">A Millió Lépés verseny jelenlegi állása</h1>
 			<hr class="w3-border-grey" style="margin:auto;width:40%"> <br />
 			<p>Résztvevők száma országosan: <th:block th:text="${#numbers.formatDecimal(allParticipant, 1, 'DEFAULT', 0,'DEFAULT')}" /> fő</p>		 
 			<p>Eddig megtett összes <i>teljesített</i> kékkör száma: <th:block th:text="${allOKK}"></p>
 			<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 0, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
 			   ami megközelítőleg <th:block th:text="${#numbers.formatDecimal(allDistanceInKm, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
 			   km távolság, azaz nagyjából <th:block th:text="${#numbers.formatDecimal(allDistanceInSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés. </p>
-			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}" />, 
-			   a játék vége 2023. június 11., hátralévő napok száma: <th:block th:text="${remainingDays}"/> </p>
+			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}" /> <br />
+			   A játék időtartama: 2023. március 27-től 2023. június 11-ig <br /> 
+			   Eltelt napok száma: <th:block th:text="${elapsedDays}"/>  <br /> 
+			   Hátralévő napok száma: <th:block th:text="${remainingDays}"/> </p>
 			<table class="w3-table-all w3-small w3-hoverable">
 				<tr>
 					<th>Helyezés</th>
@@ -34,11 +36,15 @@
 					<th>Vármegye</th>
 					<th>Kékkörök száma</th>
 					<th>Résztvevők száma</th>
-					<th>Nyerési esély (min 1 nyereményre)</th>
+					<th>Átlag lépésszám (naponta fejenként)</th>
+					<th>Nyerési esély (minimum 1 nyereményre)</th>
 					<th>Nyeremények várható értéke</th>
 					<th>Lemaradás az 1. helyezettől</th>
 					<th>Lemaradás behozható (napi lépés fejenként)</th>
-				</tr>
+					<th>Becsült végső kékkörök száma</th>
+					<th>Becsült végső lemaradás</th>
+					<th>Becsült végső lemaradás behozható (napi lépés fejenként)</th>
+				</th>
 				<tr th:each="school: ${schools}">
 					<td th:text="${school.position}"></td>
 					<td th:text="${school.name}"></td>
@@ -46,12 +52,20 @@
 					<td th:text="${school.county}"></td>
 					<td th:text="${#numbers.formatDecimal(school.okkNumber, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
 					<td th:text="${#numbers.formatDecimal(school.participants, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+					<td><th:block th:text="${#numbers.formatDecimal(school.averageDailiySteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.winProbability, 1, 'DEFAULT', 2, 'DEFAULT')}" />%</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.prizeExpectedValue, 1, 'DEFAULT', 0, 'DEFAULT')}" /> Ft</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.distanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
 					<td th:switch="${school.dailyStepsNeedToBest}">
 						<th:block th:case="9223372036854775807" th:text="Végtelen" />
 						<th:block th:case="*" th:text="${#numbers.formatDecimal(school.dailyStepsNeedToBest, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
+						lépés / fő
+				   </td>
+				   <td th:text="${#numbers.formatDecimal(school.estimatedFinalOkk, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
+				   <td><th:block th:text="${#numbers.formatDecimal(school.estimatedFinalDistanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
+				   <td th:switch="${school.estimatedDailyStepsNeedToBestFinal}">
+						<th:block th:case="9223372036854775807" th:text="Végtelen" />
+						<th:block th:case="*" th:text="${#numbers.formatDecimal(school.estimatedDailyStepsNeedToBestFinal, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
 						lépés / fő
 				   </td>
 				</tr>

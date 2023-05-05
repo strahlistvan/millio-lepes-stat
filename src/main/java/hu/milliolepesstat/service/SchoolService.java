@@ -15,9 +15,11 @@ public class SchoolService {
 
 	public void setSchoolsCalculatedData(List<School> schoolList, Integer allOkkCount) {
 		Integer remainingDays = DateUtil.getRemainingDays();
+		Integer elapsedDays = DateUtil.getElapsedDays();
 
 		for (School sch: schoolList) {
 
+			sch.calcAverageDailySteps(elapsedDays);
 			sch.calcWinProbability(allOkkCount);
 			sch.calcprizeExpectedValue(allOkkCount);
 
@@ -30,6 +32,32 @@ public class SchoolService {
 				dailyStepsNeed = dist / ( sch.getParticipants() * remainingDays );
 			}
 			sch.setDailyStepsNeedToBest(dailyStepsNeed);
+
+			/* Just some forecasting, but not really precise... */
+			sch.calcEstimatedFinalOkk(elapsedDays, remainingDays);
+
+			//this is the bonus distance that the school MUST COMPLETE to win
+			Long bonusStepsNeed = Long.MAX_VALUE;
+			Long estSteps = Calculator.convertOkkToSteps(sch.getEstimatedFinalOkk());
+			Long estDistFromBest = Calculator.getBestSchoolFinalSteps(schoolList) - estSteps;
+			sch.setEstimatedFinalDistanceFromBestSteps(estDistFromBest);
+			
+			if (sch.getParticipants() > 0 && remainingDays > 0) {
+				bonusStepsNeed = estDistFromBest / ( sch.getParticipants() * remainingDays );
+			}
+
+			// this is the distance that the school WILL COMPLETE
+			Integer participants = sch.getParticipants() == 0 ? 1 : sch.getParticipants();
+			Long estimatedSteps = Calculator.convertOkkToSteps(sch.getEstimatedFinalOkk() - sch.getOkkNumber()) / participants;
+			
+			if (estDistFromBest != 0) {
+				sch.setEstimatedDailyStepsNeedToBestFinal(bonusStepsNeed + estimatedSteps);
+
+			}
+			else {
+				sch.setEstimatedDailyStepsNeedToBestFinal(0L);
+			}
+			
 		}
 	}
 
@@ -56,6 +84,7 @@ public class SchoolService {
 		try {
 			model.addAttribute("refreshDate", WebScraper.scrapeRefreshDate());
 			model.addAttribute("remainingDays", DateUtil.getRemainingDays());
+			model.addAttribute("elapsedDays", DateUtil.getElapsedDays());
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

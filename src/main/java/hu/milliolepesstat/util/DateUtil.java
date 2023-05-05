@@ -10,7 +10,13 @@ public class DateUtil {
 		CALENDAR.set(2023, Calendar.JUNE, 11);
 	}
 	public static final Date END_DATE = CALENDAR.getTime();
+	static {
+		CALENDAR.set(2023, Calendar.MARCH, 27);
+	}
+	public static final Date START_DATE = CALENDAR.getTime();
 
+	private static Date refreshDate;
+	
 	private static Integer monthNameToNumber(String monthName) {
 		switch (monthName.toLowerCase()) {
 			case "január":
@@ -41,7 +47,7 @@ public class DateUtil {
 				return -1;
 		}
 	}
-	
+
 	private static Date parseDate(String dateStr) {
 		int year = 0, month = 0, day = 0;
 
@@ -53,21 +59,20 @@ public class DateUtil {
 		}
 
 		Date result = new GregorianCalendar(year, month, day).getTime();
-		System.out.println("parseDate eredménye " + result);
 		return result;
 	}
 	
 	private static Date getRefreshDate() {
-		Date refreshDate = null;
-		try {
-			String refreshDateStr = WebScraper.scrapeRefreshDate();
-			refreshDate = parseDate(refreshDateStr);
+		if (DateUtil.refreshDate == null) {
+			try {
+				String refreshDateStr = WebScraper.scrapeRefreshDate();
+				DateUtil.refreshDate = parseDate(refreshDateStr);
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return refreshDate;
+		return DateUtil.refreshDate;
 	}
 	
 	public static Integer getRemainingDays() {
@@ -82,4 +87,16 @@ public class DateUtil {
 		return diffInDays;
 	}
 
+	public static Integer getElapsedDays() {
+		Date now = getRefreshDate();
+		Long diffInMs = now.getTime() - START_DATE.getTime();
+
+		if (diffInMs < 0) {
+			return 0;
+		}
+
+		Integer diffInDays = (int) TimeUnit.DAYS.convert(diffInMs, TimeUnit.MILLISECONDS);
+		return diffInDays;
+	}
+	
 }

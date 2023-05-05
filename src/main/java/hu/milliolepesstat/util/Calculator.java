@@ -93,4 +93,12 @@ public class Calculator {
 		return result;
 	}
 
+	public static Long getBestSchoolFinalSteps(List<School> schoolList) {
+		Long result = 0L;
+		if (schoolList != null && schoolList.size() > 0) {
+			result = convertOkkToSteps(schoolList.get(0).getEstimatedFinalOkk()); // the list sorted by distance
+		}
+		return result;
+	}
+
 }
