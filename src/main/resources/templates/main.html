@@ -21,7 +21,7 @@
 			<hr class="w3-border-grey" style="margin:auto;width:40%"> <br />
 			<p>Résztvevők száma országosan: <th:block th:text="${#numbers.formatDecimal(allParticipant, 1, 'DEFAULT', 0,'DEFAULT')}" /> fő</p>		 
 			<p>Eddig megtett összes <i>teljesített</i> kékkör száma: <th:block th:text="${allOKK}"></p>
-			<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 2, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
+			<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 0, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
 			   ami megközelítőleg <th:block th:text="${#numbers.formatDecimal(allDistanceInKm, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
 			   km távolság, azaz nagyjából <th:block th:text="${#numbers.formatDecimal(allDistanceInSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés. </p>
 			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}" />, 
@@ -36,8 +36,8 @@
 					<th>Résztvevők száma</th>
 					<th>Nyerési esély (min 1 nyereményre)</th>
 					<th>Nyeremények várható értéke</th>
-					<th>Lépés kell még az első helyhez</th>
-					<th>Napi ennyi lépés kell az 1. helyhez</th>
+					<th>Lemaradás az 1. helyezettől</th>
+					<th>Lemaradás behozható (napi lépés fejenként)</th>
 				</tr>
 				<tr th:each="school: ${schools}">
 					<td th:text="${school.position}"></td>
@@ -49,7 +49,11 @@
 					<td><th:block th:text="${#numbers.formatDecimal(school.winProbability, 1, 'DEFAULT', 2, 'DEFAULT')}" />%</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.prizeExpectedValue, 1, 'DEFAULT', 0, 'DEFAULT')}" /> Ft</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.distanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
-					<td><th:block th:text="${#numbers.formatDecimal(school.dailyStepsNeedToBest, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés / fő</td>
+					<td th:switch="${school.dailyStepsNeedToBest}">
+						<th:block th:case="9223372036854775807" th:text="Végtelen" />
+						<th:block th:case="*" th:text="${#numbers.formatDecimal(school.dailyStepsNeedToBest, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
+						lépés / fő
+				   </td>
 				</tr>
 			</table>
 		</div>
