@@ -27,9 +27,8 @@ public class School {
 
 	@Setter(AccessLevel.NONE)
 	private Double estimatedFinalOkk;
-	
+
 	private Long estimatedFinalDistanceFromBestSteps;
-	private Long estimatedDailyStepsNeedToBestFinal;
 
 	/** It is NOT a simple setter! Calculates probability by given parameters in Calculator class. */
 	public void calcWinProbability(Integer allOkkNumber) {
@@ -48,7 +47,10 @@ public class School {
 
 	/** It is NOT a simple setter! Calculate estimated final distance. */
 	public void calcEstimatedFinalOkk(Integer elapsedDays, Integer remainingDays) {
-		this.estimatedFinalOkk = ( 1.0 + (double) remainingDays / elapsedDays ) * this.okkNumber;
+		//this.estimatedFinalOkk = ( 1.0 + (double) remainingDays / elapsedDays ) * this.okkNumber;
+		Long stepsDone = Calculator.convertOkkToSteps(this.okkNumber);
+		Long estimatedSteps = (long) (remainingDays * this.averageDailiySteps * this.participants);
+		this.estimatedFinalOkk = Calculator.convertStepsToOkk(stepsDone + estimatedSteps);
 	}
 
 }

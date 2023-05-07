@@ -84,19 +84,39 @@ public class Calculator {
 	public static Long convertOkkToSteps(Double okk) {
 		return (long) Math.floor(DIST_OKK_IN_METERS * STEP_SIZE_IN_METERS * okk);
 	}
+
+	public static Double convertStepsToOkk(Long steps) {
+		return (double) steps / DIST_OKK_IN_METERS / STEP_SIZE_IN_METERS;
+	}
 	
 	public static Long getBestSchoolSteps(List<School> schoolList) {
 		Long result = 0L;
 		if (schoolList != null && schoolList.size() > 0) {
-			result = convertOkkToSteps(schoolList.get(0).getOkkNumber()); // the list sorted by distance
+				result = convertOkkToSteps(schoolList.get(0).getOkkNumber()); // the list sorted by distance
 		}
 		return result;
 	}
 
+	private static List<School> getSortedSchoolListByEstimatedFinalOkk(List<School> schoolList) {
+		List<School> schoolListSortable = new ArrayList<School>();
+		schoolListSortable.addAll(schoolList);
+
+		Comparator<School> comparator = new Comparator<School>() {
+			@Override
+			public int compare(School sch1, School sch2) {
+				return Double.compare(sch2.getEstimatedFinalOkk(), sch1.getEstimatedFinalOkk());
+			}
+		};
+
+		schoolListSortable.sort(comparator);
+		return schoolListSortable;
+	}
+	
 	public static Long getBestSchoolFinalSteps(List<School> schoolList) {
 		Long result = 0L;
 		if (schoolList != null && schoolList.size() > 0) {
-			result = convertOkkToSteps(schoolList.get(0).getEstimatedFinalOkk()); // the list sorted by distance
+			List<School> schoolListSorted = getSortedSchoolListByEstimatedFinalOkk(schoolList);
+			result = convertOkkToSteps(schoolListSorted.get(0).getEstimatedFinalOkk());
 		}
 		return result;
 	}

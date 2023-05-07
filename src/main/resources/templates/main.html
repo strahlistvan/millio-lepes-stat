@@ -39,11 +39,10 @@
 					<th>Átlag lépésszám (naponta fejenként)</th>
 					<th>Nyerési esély (minimum 1 nyereményre)</th>
 					<th>Nyeremények várható értéke</th>
-					<th>Lemaradás az 1. helyezettől</th>
-					<th>Lemaradás behozható (napi lépés fejenként)</th>
+					<th>Távolság az 1. helyezettől</th>
+					<th>Távolság teljesíthető /fő/nap plusz lépéssel</th>
 					<th>Becsült végső kékkörök száma</th>
-					<th>Becsült végső lemaradás</th>
-					<th>Becsült végső lemaradás behozható (napi lépés fejenként)</th>
+					<th>Becsült végső távolság az 1. helyezettől</th>
 				</th>
 				<tr th:each="school: ${schools}">
 					<td th:text="${school.position}"></td>
@@ -52,7 +51,7 @@
 					<td th:text="${school.county}"></td>
 					<td th:text="${#numbers.formatDecimal(school.okkNumber, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
 					<td th:text="${#numbers.formatDecimal(school.participants, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
-					<td><th:block th:text="${#numbers.formatDecimal(school.averageDailiySteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
+					<td><th:block th:text="${#numbers.formatDecimal(school.averageDailiySteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés / fő</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.winProbability, 1, 'DEFAULT', 2, 'DEFAULT')}" />%</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.prizeExpectedValue, 1, 'DEFAULT', 0, 'DEFAULT')}" /> Ft</td>
 					<td><th:block th:text="${#numbers.formatDecimal(school.distanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
@@ -63,11 +62,6 @@
 				   </td>
 				   <td th:text="${#numbers.formatDecimal(school.estimatedFinalOkk, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
 				   <td><th:block th:text="${#numbers.formatDecimal(school.estimatedFinalDistanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
-				   <td th:switch="${school.estimatedDailyStepsNeedToBestFinal}">
-						<th:block th:case="9223372036854775807" th:text="Végtelen" />
-						<th:block th:case="*" th:text="${#numbers.formatDecimal(school.estimatedDailyStepsNeedToBestFinal, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
-						lépés / fő
-				   </td>
 				</tr>
 			</table>
 		</div>

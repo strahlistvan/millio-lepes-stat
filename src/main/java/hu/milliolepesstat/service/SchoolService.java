@@ -13,6 +13,17 @@ import hu.milliolepesstat.util.WebScraper;
 @Service
 public class SchoolService {
 
+	/** Just some forecasting, but not really precise... */	
+	private void setSchoolsEstimatedData(List<School> schoolList) {
+		Long bestSchoolFinalSteps = Calculator.getBestSchoolFinalSteps(schoolList);
+		
+		for (School sch: schoolList) {
+			Long estSteps = Calculator.convertOkkToSteps(sch.getEstimatedFinalOkk());
+			Long estDistFromBest = bestSchoolFinalSteps - estSteps;
+			sch.setEstimatedFinalDistanceFromBestSteps(estDistFromBest);
+		}
+	}
+	
 	public void setSchoolsCalculatedData(List<School> schoolList, Integer allOkkCount) {
 		Integer remainingDays = DateUtil.getRemainingDays();
 		Integer elapsedDays = DateUtil.getElapsedDays();
@@ -33,32 +44,11 @@ public class SchoolService {
 			}
 			sch.setDailyStepsNeedToBest(dailyStepsNeed);
 
-			/* Just some forecasting, but not really precise... */
 			sch.calcEstimatedFinalOkk(elapsedDays, remainingDays);
-
-			//this is the bonus distance that the school MUST COMPLETE to win
-			Long bonusStepsNeed = Long.MAX_VALUE;
-			Long estSteps = Calculator.convertOkkToSteps(sch.getEstimatedFinalOkk());
-			Long estDistFromBest = Calculator.getBestSchoolFinalSteps(schoolList) - estSteps;
-			sch.setEstimatedFinalDistanceFromBestSteps(estDistFromBest);
-			
-			if (sch.getParticipants() > 0 && remainingDays > 0) {
-				bonusStepsNeed = estDistFromBest / ( sch.getParticipants() * remainingDays );
-			}
-
-			// this is the distance that the school WILL COMPLETE
-			Integer participants = sch.getParticipants() == 0 ? 1 : sch.getParticipants();
-			Long estimatedSteps = Calculator.convertOkkToSteps(sch.getEstimatedFinalOkk() - sch.getOkkNumber()) / participants;
-			
-			if (estDistFromBest != 0) {
-				sch.setEstimatedDailyStepsNeedToBestFinal(bonusStepsNeed + estimatedSteps);
-
-			}
-			else {
-				sch.setEstimatedDailyStepsNeedToBestFinal(0L);
-			}
-			
 		}
+		
+		// call the prediction process
+		setSchoolsEstimatedData(schoolList);
 	}
 
 	public void addSchoolDataToModel(Model model) {
