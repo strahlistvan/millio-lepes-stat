@@ -7,43 +7,45 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" th:src="@{/search-sort-table.js}"></script>
+	<!--link href="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/sortable.min.css" rel="stylesheet" /-->
+	<script src="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/sortable.min.js"></script>
 </head>
 <body>
 	<div class="w3-display-container w3-animate-opacity w3-responsive">
-		<div class="w3-display-topright w3-padding-large w3-xlarge">
-			<form action="/" method="get">
-				<input name="year" type="number" min=1 class="w3-input w3-animate-input" placeholder="Kereső" style="width:250px">
-				<button type="submit" class="w3-button w3-black">Keresés</button>
-			</form>
-		</div>
-		<div class="w3-responsive">
-			<h1 class="w3-xxxlarge w3-animate-top">A Millió Lépés verseny jelenlegi állása</h1>
-			<hr class="w3-border-grey" style="margin:auto;width:40%"> <br />
-			<p>Résztvevők száma országosan: <th:block th:text="${#numbers.formatDecimal(allParticipant, 1, 'DEFAULT', 0,'DEFAULT')}" /> fő</p>		 
-			<p>Eddig megtett összes <i>teljesített</i> kékkör száma: <th:block th:text="${allOKK}"></p>
-			<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 0, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
-			   ami megközelítőleg <th:block th:text="${#numbers.formatDecimal(allDistanceInKm, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
-			   km távolság, azaz nagyjából <th:block th:text="${#numbers.formatDecimal(allDistanceInSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés. </p>
-			<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}" /> <br />
-			   A játék időtartama: 2023. március 27-től 2023. június 11-ig <br /> 
-			   Eltelt napok száma: <th:block th:text="${elapsedDays}"/>  <br /> 
-			   Hátralévő napok száma: <th:block th:text="${remainingDays}"/> </p>
-			<table class="w3-table-all w3-small w3-hoverable">
-				<tr>
-					<th>Helyezés</th>
-					<th>Név</th>
-					<th>Helység</th>
-					<th>Vármegye</th>
-					<th>Kékkörök száma</th>
-					<th>Résztvevők száma</th>
-					<th>Átlag lépésszám (naponta fejenként)</th>
-					<th>Nyerési esély (minimum 1 nyereményre)</th>
-					<th>Nyeremények várható értéke</th>
-					<th>Távolság az 1. helyezettől</th>
-					<th>Távolság teljesíthető /fő/nap plusz lépéssel</th>
-					<th>Becsült végső kékkörök száma</th>
-					<th>Becsült végső távolság az 1. helyezettől</th>
-				</th>
+		<h1 class="w3-xxxlarge w3-animate-top">A Millió Lépés verseny jelenlegi állása</h1>
+		<hr class="w3-border-grey" /> <br />
+		<p>Résztvevők száma országosan: <th:block th:text="${#numbers.formatDecimal(allParticipant, 1, 'DEFAULT', 0,'DEFAULT')}" /> fő</p>		 
+		<p>Eddig megtett összes <i>teljesített</i> kékkör száma: <th:block th:text="${allOKK}"></p>
+		<p>Az iskolák eddig <th:block th:text="${#numbers.formatDecimal(allDistanceInOkk, 1, 'DEFAULT', 0, 'DEFAULT')}" /> kékkörnél is több utat tettek meg,
+		   ami megközelítőleg <th:block th:text="${#numbers.formatDecimal(allDistanceInKm, 1, 'DEFAULT', 0, 'DEFAULT')}" /> 
+		   km távolság, azaz nagyjából <th:block th:text="${#numbers.formatDecimal(allDistanceInSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés.
+		</p>
+		<p>Adatok frissítésének dátuma: <th:block th:text="${refreshDate}" /> </p>
+		<p>A játék időtartama: 2023. március 27-től 2023. június 11-ig </p> 
+		<p>Eltelt napok száma: <th:block th:text="${elapsedDays}"/>  </p> 
+		<p>Hátralévő napok száma: <th:block th:text="${remainingDays}"/> </p> 
+		</p>
+		<hr class="w3-border-grey" /> <br />
+		<h2 class="w3-xlarge">Iskolák listája</h2>
+		<input id="searchInput" type="text" min=1 class="w3-input w3-animate-input" onkeyup="searchInTable()" placeholder="Keresés név, helység, vármegye vagy helyezés alapján...">
+		<table id="schoolTable" class="w3-table-all w3-small w3-hoverable sortable">
+			<thead>
+				<th>Helyezés</th>
+				<th>Iskola neve</th>
+				<th>Helység</th>
+				<th>Vármegye</th>
+				<th>Kékkörök száma</th>
+				<th>Résztvevők száma</th>
+				<th>Átlag lépésszám (naponta fejenként)</th>
+				<th>Nyerési esély (minimum 1 nyereményre)</th>
+				<th>Nyeremények várható értéke</th>
+				<th>Távolság az 1. helyezettől</th>
+				<th>Távolság teljesíthető /fő/nap plusz lépéssel</th>
+				<th>Becsült végső kékkörök száma</th>
+				<th>Becsült végső távolság az 1. helyezettől</th>
+			</thead>
+			<tbody>
 				<tr th:each="school: ${schools}">
 					<td th:text="${school.position}"></td>
 					<td th:text="${school.name}"></td>
@@ -63,8 +65,19 @@
 				   <td th:text="${#numbers.formatDecimal(school.estimatedFinalOkk, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
 				   <td><th:block th:text="${#numbers.formatDecimal(school.estimatedFinalDistanceFromBestSteps, 1, 'DEFAULT', 0, 'DEFAULT')}" /> lépés</td>
 				</tr>
-			</table>
-		</div>
+			</tbody>
+		</table>
+		<hr class="w3-border-grey" /> <br />
+		<p>
+		  A táblázat adatai mind a nyilvánosan elérhető <a href="https://milliolepes.hu/iskolak-toplistaja/" title="Iskolák aktuális helyezése - MILLIÓ LÉPÉS AZ ISKOLÁDÉRT">Millió lépés az iskoládért</a> weboldaláról származnak.
+		  A szervezők oldalán nem megtalálható adatok minden további számolt adatot ezekből állítottam elő. Ezek egyike sem minősül hivatalos adatnak, csak tanulási és szórakozási céllal hoztam létre ezt a webalkalmazást.
+		  Az oldalon a valószínűségek a <a href="https://hu.wikipedia.org/wiki/Hipergeometrikus_eloszl%C3%A1s" title="Wikipédia">hipergeometrikus eloszláson</a>, azaz a visszatevés nélküli mintavételen alapul. 
+		  A várható érték számításkor a 100 darab, egyenként 1 000 000 Ft értékű nyeremént veszem a súlyozás alapjául.
+		  A plusz lépések az első helyezettől a verseny mindenkori aktuális állását tükrözik, nem a becsült végső távolságokat.
+		  A becslés a verseny kezdete óta eltelt és hátralévő napokon, az iskolánként megtett távolságokon és csatlakozott személyeken alapszik. Emiatt vélhetően rendkívül pontatlan.
+		  Az oldal mögött nincs semmilyen tárolt adat a <a href="https://milliolepes.hu/iskolak-toplistaja/" title="Iskolák aktuális helyezése - MILLIÓ LÉPÉS AZ ISKOLÁDÉRT">Millió lépés az iskoládért</a> weboldalon kívül. 
+		  Még sütik sincsenek, így nincs mit elfogadni.
+		</p>
 	</div>
 </body>
 </html>

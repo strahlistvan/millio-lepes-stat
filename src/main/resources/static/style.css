@@ -2,8 +2,9 @@ h1 {
   font-family: "Raleway", sans-serif;
   text-align: center;
 }
-h1:hover {
-  color: gray;
+h2 {
+  font-family: "Raleway", sans-serif;
+  font-weight: bold;
 }
 body, html {
   height: 100%;
@@ -25,5 +26,30 @@ p {
   text-align: justify;
 }
 div {
-  padding: 2%;
+  padding: 5%;
+}
+
+/* More information: https://www.w3schools.com/howto/howto_js_filter_table.asp */
+#searchInput {
+  background-image: url('http://www.w3schools.com/css/searchicon.png'); /* Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 100%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 12px 20px 12px 40px; /* Add some padding */
+  border: 1px solid #ddd; /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+}
+
+th {
+	text-align: center;
+	vertical-align: middle;
+	padding-top: 10%;
+	display: table-cell;
+	cursor: pointer;
+	background-color: darkgrey;
+}
+hr {
+  margin: auto;
+  width: 100%;	
 }
